@@ -79,7 +79,7 @@ python -m secscan.cli dast --url http://localhost:5000 [--format json|sarif]
 4. 如需 SARIF 命名映射，补充 `secscan/reporting/sarif.py`
 
 ## 示例产物
-扫描产物输出在 `artifacts/`：
+扫描产物可通过 `make scan` 本地生成到 `artifacts/`（该目录已加入 git 忽略）：
 - `artifacts/findings.json`
 - `artifacts/report.html`
 - `artifacts/sast.sarif`

@@ -80,10 +80,11 @@ make gate
 4. Optionally map rule metadata in `secscan/reporting/sarif.py`.
 
 ## Example Report Output
-Sample artifacts are generated in `artifacts/`:
+Sample artifacts can be generated locally in `artifacts/` via `make scan` (directory is ignored in git):
 - `artifacts/findings.json`
 - `artifacts/report.html`
 - `artifacts/sast.sarif`
+- `artifacts/secrets.sarif`
 
 Example summary snippet:
 ```text
