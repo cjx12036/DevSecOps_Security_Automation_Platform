@@ -35,26 +35,26 @@ jobs:
 
       - name: Run SAST (SARIF)
         run: |
-          python -m secscan.cli sast --path demo_app --format sarif --output sast.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts"
-          rc=$?
+          rc=0
+          python -m secscan.cli sast --path demo_app --format sarif --output sast.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts" || rc=$?
           if [ "$rc" -gt 1 ]; then exit "$rc"; fi
 
       - name: Run Secrets (SARIF)
         run: |
-          python -m secscan.cli secrets --path demo_app --format sarif --output secrets.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts"
-          rc=$?
+          rc=0
+          python -m secscan.cli secrets --path demo_app --format sarif --output secrets.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts" || rc=$?
           if [ "$rc" -gt 1 ]; then exit "$rc"; fi
 
       - name: Run SAST (JSON)
         run: |
-          python -m secscan.cli sast --path demo_app --format json --output sast.json --exclude ".venv,dist,build,node_modules,.git,artifacts"
-          rc=$?
+          rc=0
+          python -m secscan.cli sast --path demo_app --format json --output sast.json --exclude ".venv,dist,build,node_modules,.git,artifacts" || rc=$?
           if [ "$rc" -gt 1 ]; then exit "$rc"; fi
 
       - name: Run Secrets (JSON)
         run: |
-          python -m secscan.cli secrets --path demo_app --format json --output secrets.json --exclude ".venv,dist,build,node_modules,.git,artifacts"
-          rc=$?
+          rc=0
+          python -m secscan.cli secrets --path demo_app --format json --output secrets.json --exclude ".venv,dist,build,node_modules,.git,artifacts" || rc=$?
           if [ "$rc" -gt 1 ]; then exit "$rc"; fi
 
       - name: Merge findings and enforce policy
