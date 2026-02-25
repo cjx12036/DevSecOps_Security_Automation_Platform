@@ -1,0 +1,89 @@
+{
+  "findings": [
+    {
+      "code_snippet": "resp = requests.get(url, timeout=3)",
+      "confidence": "high",
+      "description": "Outbound HTTP request uses user-controlled URL without visible allowlist checks.",
+      "file": "demo_app/app.py",
+      "id": "SEC-SSRF-001",
+      "line_end": 47,
+      "line_start": 47,
+      "owasp_category": "A10:2021-Server-Side Request Forgery",
+      "remediation": [
+        "Restrict outbound destinations with explicit allowlists.",
+        "Validate scheme/host/port and block private/link-local ranges.",
+        "Route external calls through a hardened proxy when possible."
+      ],
+      "severity": "high",
+      "title": "Potential SSRF"
+    },
+    {
+      "code_snippet": "obj = pickle.loads(data)",
+      "confidence": "high",
+      "description": "pickle deserialization can execute arbitrary code from untrusted input.",
+      "file": "demo_app/app.py",
+      "id": "SEC-DESER-001",
+      "line_end": 54,
+      "line_start": 54,
+      "owasp_category": "A08:2021-Software and Data Integrity Failures",
+      "remediation": [
+        "Avoid pickle for untrusted data.",
+        "Use JSON or a safe serialization format.",
+        "Authenticate and validate serialized payloads before processing."
+      ],
+      "severity": "critical",
+      "title": "Insecure Deserialization via pickle"
+    },
+    {
+      "code_snippet": "obj = yaml.load(payload)",
+      "confidence": "high",
+      "description": "yaml.load without SafeLoader can instantiate arbitrary objects.",
+      "file": "demo_app/app.py",
+      "id": "SEC-DESER-002",
+      "line_end": 61,
+      "line_start": 61,
+      "owasp_category": "A08:2021-Software and Data Integrity Failures",
+      "remediation": [
+        "Replace yaml.load with yaml.safe_load where possible.",
+        "If loader is required, use yaml.SafeLoader explicitly.",
+        "Validate schema of parsed data before use."
+      ],
+      "severity": "high",
+      "title": "Unsafe yaml.load usage"
+    },
+    {
+      "code_snippet": "subprocess.run(cmd, shell=True, check=False)",
+      "confidence": "high",
+      "description": "Shell command execution may include unsafe/user-controlled input.",
+      "file": "demo_app/app.py",
+      "id": "SEC-CMDI-001",
+      "line_end": 68,
+      "line_start": 68,
+      "owasp_category": "A03:2021-Injection",
+      "remediation": [
+        "Avoid shell=True and pass commands as argument lists.",
+        "Use strict input validation/allowlists for command parameters.",
+        "Prefer safe library APIs over shelling out."
+      ],
+      "severity": "high",
+      "title": "Potential Command Injection"
+    },
+    {
+      "code_snippet": "os.system(cmd)",
+      "confidence": "medium",
+      "description": "Shell command execution may include unsafe/user-controlled input.",
+      "file": "demo_app/app.py",
+      "id": "SEC-CMDI-001",
+      "line_end": 69,
+      "line_start": 69,
+      "owasp_category": "A03:2021-Injection",
+      "remediation": [
+        "Avoid shell=True and pass commands as argument lists.",
+        "Use strict input validation/allowlists for command parameters.",
+        "Prefer safe library APIs over shelling out."
+      ],
+      "severity": "high",
+      "title": "Potential Command Injection"
+    }
+  ]
+}

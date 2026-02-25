@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "secscan"
+version = "0.1.0"
+description = "DevSecOps security automation prototype"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+secscan = "secscan.cli:main"
+
+[tool.setuptools]
+packages = ["secscan", "secscan.rules", "secscan.reporting", "secscan.governance"]

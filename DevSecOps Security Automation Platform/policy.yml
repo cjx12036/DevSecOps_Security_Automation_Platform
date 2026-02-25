@@ -1,0 +1,4 @@
+max_severity: medium
+fail_on_severities:
+  - high
+  - critical
