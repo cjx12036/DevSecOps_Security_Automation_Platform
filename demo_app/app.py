@@ -1,28 +1,30 @@
 from __future__ import annotations
 
 import os
-import pickle
 import sqlite3
-import subprocess
 
 import requests
 import yaml
-from flask import Flask, request
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# Intentionally vulnerable demo constants
-API_TOKEN = "ghp_1234567890abcdefghijklmnopqrstuvwxyzAB"
-DB_PASSWORD = "super-secret-password"
+ALLOWED_PROXY_TARGETS = {
+    "httpbin": "https://httpbin.org/get",
+    "example": "https://example.com",
+}
 
 
-def get_db_connection():
-    return sqlite3.connect(":memory:")
+def get_db_connection() -> sqlite3.Connection:
+    conn = sqlite3.connect(":memory:")
+    conn.execute("CREATE TABLE IF NOT EXISTS users (username TEXT)")
+    conn.execute("INSERT INTO users(username) VALUES (?)", ("admin",))
+    return conn
 
 
 @app.route("/health")
 def health():
-    return "ok"
+    return jsonify({"status": "ok"})
 
 
 @app.route("/user")
@@ -30,44 +32,42 @@ def user_lookup():
     username = request.args.get("username", "")
     conn = get_db_connection()
     cur = conn.cursor()
-    query = f"SELECT * FROM users WHERE username = '{username}'"
-    cur.execute(query)
-    return "queried"
+    cur.execute("SELECT username FROM users WHERE username = ?", (username,))
+    row = cur.fetchone()
+    return jsonify({"user": row[0] if row else None})
 
 
 @app.route("/search")
 def search():
     q = request.args.get("q", "")
-    return f"<h1>Results for: {q}</h1>"
+    return jsonify({"query": q})
 
 
 @app.route("/proxy")
 def proxy():
-    url = request.args.get("url", "https://example.com")
+    target = request.args.get("target", "example")
+    url = ALLOWED_PROXY_TARGETS.get(target, ALLOWED_PROXY_TARGETS["example"])
     resp = requests.get(url, timeout=3)
-    return resp.text
+    return jsonify({"status_code": resp.status_code, "target": target})
 
 
 @app.route("/deserialize", methods=["POST"])
 def deserialize():
-    data = request.get_data()
-    obj = pickle.loads(data)
-    return str(obj)
+    payload = request.get_json(silent=True) or {}
+    return jsonify({"received": payload})
 
 
 @app.route("/yaml", methods=["POST"])
 def parse_yaml():
-    payload = request.get_data(as_text=True)
-    obj = yaml.load(payload)
-    return str(obj)
+    body = request.get_data(as_text=True)
+    parsed = yaml.safe_load(body) if body else {}
+    return jsonify({"parsed_type": type(parsed).__name__})
 
 
-@app.route("/run")
-def run_cmd():
-    cmd = request.args.get("cmd", "echo hello")
-    subprocess.run(cmd, shell=True, check=False)
-    os.system(cmd)
-    return "ran"
+@app.route("/config")
+def config_status():
+    token_configured = bool(os.getenv("API_TOKEN"))
+    return jsonify({"token_set": token_configured})
 
 
 if __name__ == "__main__":
