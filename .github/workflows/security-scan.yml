@@ -1,0 +1,51 @@
+name: security-scan
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  secscan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Run SAST (SARIF)
+        run: python -m secscan.cli sast --path . --format sarif --output sast.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts"
+
+      - name: Run Secrets (SARIF)
+        run: python -m secscan.cli secrets --path . --format sarif --output secrets.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts"
+
+      - name: Run SAST (JSON)
+        run: python -m secscan.cli sast --path . --format json --output sast.json --exclude ".venv,dist,build,node_modules,.git,artifacts"
+
+      - name: Run Secrets (JSON)
+        run: python -m secscan.cli secrets --path . --format json --output secrets.json --exclude ".venv,dist,build,node_modules,.git,artifacts"
+
+      - name: Merge findings and enforce policy
+        run: |
+          python -c 'import json; a=json.load(open("sast.json")); b=json.load(open("secrets.json")); json.dump({"findings":a.get("findings",[])+b.get("findings",[])}, open("findings.json","w"), indent=2)'
+          python -m secscan.cli policy --input findings.json --policy policy.yml
+
+      - name: Upload SAST SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: sast.sarif
+
+      - name: Upload Secrets SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: secrets.sarif
