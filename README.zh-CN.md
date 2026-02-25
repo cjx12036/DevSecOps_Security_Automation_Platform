@@ -7,6 +7,7 @@
 - 可选轻量 DAST（反射型 XSS、SSRF 代理行为）
 - 多格式输出：JSON、SARIF（GitHub Code Scanning）、HTML
 - 治理状态追踪：`OPEN`、`FIXED`、`ACCEPTED_RISK`
+- CI 仅扫描本次改动的 `demo_app` 文件，反馈更快
 
 ## 快速开始
 ```bash
@@ -14,7 +15,7 @@ make setup
 make scan
 ```
 
-说明：`make scan` 总是生成报告产物；本地策略门禁请执行：
+说明：`make scan` 总是本地生成报告产物；本地策略门禁请执行：
 ```bash
 make gate
 ```
@@ -22,6 +23,11 @@ make gate
 启动演示应用：
 ```bash
 make run-demo
+```
+
+仅生成 demo_app 的 SARIF 产物：
+```bash
+make artifacts
 ```
 
 ## CLI 命令
@@ -67,9 +73,12 @@ python -m secscan.cli dast --url http://localhost:5000 [--format json|sarif]
 
 ## CI 集成（GitHub Actions）
 工作流文件：`.github/workflows/security-scan.yml`
-- 触发：`push`、`pull_request`
-- 执行：`sast` + `secrets`
-- 上传：SARIF 到 GitHub Code Scanning
+- 触发：`push`、`pull_request` 且仅在相关路径改动时触发（`demo_app/**`、`secscan/**`、workflow、`policy.yml`）
+- 范围：计算本次改动文件，仅扫描改动过的 `demo_app` 文件
+- 执行：`sast` + `secrets`（返回码 `1` 视为有发现但不中断，运行错误仍失败）
+- 上传：SARIF 到 GitHub Code Scanning，分两个 category：
+  - `secscan-sast`
+  - `secscan-secrets`
 - 门禁：合并 JSON 后执行策略检查，高/严重漏洞使流水线失败
 
 ## 如何新增规则
@@ -85,3 +94,11 @@ python -m secscan.cli dast --url http://localhost:5000 [--format json|sarif]
 - `artifacts/sast.sarif`
 - `artifacts/secrets.sarif`
 
+示例摘要格式：
+```text
+Total findings: N
+Critical: X
+High: Y
+Medium: Z
+Low: W
+```

@@ -7,17 +7,23 @@ A practical Python 3.11+ security automation platform that integrates into SDLC 
 - Optional lightweight DAST checks for reflected XSS + SSRF proxy behavior.
 - Multi-format outputs: JSON, SARIF (GitHub code scanning), HTML report.
 - Governance sync with lifecycle states: `OPEN`, `FIXED`, `ACCEPTED_RISK`.
+- CI is scoped to changed files under `demo_app/` for faster feedback.
 
 ## Quickstart
 ```bash
 make setup
 make scan
 ```
-`make scan` always generates artifacts; use `make gate` to enforce fail-on-high/critical policy locally.
+`make scan` always generates local artifacts; use `make gate` to enforce fail-on-high/critical policy locally.
 
 Run demo app:
 ```bash
 make run-demo
+```
+
+Generate demo-only SARIF artifacts:
+```bash
+make artifacts
 ```
 
 ## CLI Commands
@@ -63,10 +69,13 @@ Use `secscan sync` to update `findings_db.json`:
 
 ## CI Gating (GitHub Actions)
 Workflow: `.github/workflows/security-scan.yml`
-- Trigger: push + pull request
-- Runs `secscan sast` and `secscan secrets`
-- Uploads SARIF to GitHub code scanning
-- Merges JSON findings and fails build on `high`/`critical`
+- Trigger: `push` + `pull_request` on relevant paths only (`demo_app/**`, `secscan/**`, workflow, `policy.yml`).
+- Scope: computes changed files and scans only changed files under `demo_app/`.
+- Runs `secscan sast` and `secscan secrets` (exit code `1` tolerated; runtime errors still fail).
+- Uploads SARIF to GitHub code scanning with separate categories:
+  - `secscan-sast`
+  - `secscan-secrets`
+- Merges JSON findings and fails build on `high`/`critical` in policy step.
 
 Local policy gate:
 ```bash
@@ -88,11 +97,9 @@ Sample artifacts can be generated locally in `artifacts/` via `make scan` (direc
 
 Example summary snippet:
 ```text
-Total findings: 11
-Critical: 2
-High: 7
-Medium: 2
-Low: 0
+Total findings: N
+Critical: X
+High: Y
+Medium: Z
+Low: W
 ```
-
-
