@@ -85,8 +85,3 @@ python -m secscan.cli dast --url http://localhost:5000 [--format json|sarif]
 - `artifacts/sast.sarif`
 - `artifacts/secrets.sarif`
 
-## 简历要点（Resume Bullets）
-- 构建 Python **DevSecOps** 安全自动化平台，打通 SDLC，在 push/PR 自动触发并接入 GitHub Code Scanning（SARIF）。
-- 实现 OWASP Top 10 对齐规则（SQLi、XSS、SSRF、反序列化、命令注入、Secrets），产出确定性 JSON/SARIF/HTML 报告。
-- 设计轻量治理能力：`OPEN/FIXED/ACCEPTED_RISK` 生命周期追踪、Baseline 抑制与策略即代码门禁。
-- 交付 Linux 兼容、Make 驱动、可测试的原型，并提供带漏洞的 Flask 演示应用用于端到端验证。
