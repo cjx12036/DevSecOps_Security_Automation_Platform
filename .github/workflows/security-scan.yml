@@ -133,8 +133,10 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: sast.sarif
+          category: secscan-sast
 
       - name: Upload Secrets SARIF
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: secrets.sarif
+          category: secscan-secrets
