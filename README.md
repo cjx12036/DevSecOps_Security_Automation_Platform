@@ -95,8 +95,4 @@ Medium: 2
 Low: 0
 ```
 
-## Resume Bullets
-- Built a Python-based **DevSecOps** security automation platform with SDLC-native CI gating on push/PR and SARIF integration for GitHub Code Scanning.
-- Implemented OWASP Top 10-aligned detections (SQLi, XSS, SSRF, insecure deserialization, command injection, secrets) with deterministic JSON/SARIF/HTML outputs.
-- Designed lightweight governance tracking for finding lifecycle (`OPEN`, `FIXED`, `ACCEPTED_RISK`) with baseline suppression and policy-as-code enforcement.
-- Delivered tested, Linux-compatible tooling with Make-driven setup/scan workflows and a vulnerable Flask app for end-to-end demonstrations.
+
