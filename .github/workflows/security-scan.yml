@@ -14,12 +14,16 @@ on:
       - '.github/workflows/security-scan.yml'
       - 'policy.yml'
 
+concurrency:
+  group: security-scan-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   secscan:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
-      contents: read
+      contents: write
       actions: read
     steps:
       - uses: actions/checkout@v4
@@ -124,9 +128,32 @@ jobs:
           python -m secscan.cli secrets --path scan_scope/demo_app --format json --output secrets.json --exclude ".venv,dist,build,node_modules,.git,artifacts" || rc=$?
           if [ "$rc" -gt 1 ]; then exit "$rc"; fi
 
-      - name: Merge findings and enforce policy
+      - name: Merge findings
         run: |
           python -c 'import json; a=json.load(open("sast.json")); b=json.load(open("secrets.json")); json.dump({"findings":a.get("findings",[])+b.get("findings",[])}, open("findings.json","w"), indent=2)'
+
+      - name: Sync Governance DB
+        if: steps.scope.outputs.has_files == 'true'
+        run: |
+          [ -f findings_db.json ] || echo '{"items":{}}' > findings_db.json
+          python -m secscan.cli sync --input findings.json --db findings_db.json
+
+      - name: Auto Commit Governance DB
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.scope.outputs.has_files == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add findings_db.json
+          if git diff --cached --quiet; then
+            echo "No findings_db.json changes to commit"
+            exit 0
+          fi
+          git commit -m "chore(governance): update findings_db [skip ci]"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Enforce policy
+        run: |
           python -m secscan.cli policy --input findings.json --policy policy.yml
 
       - name: Upload SAST SARIF
