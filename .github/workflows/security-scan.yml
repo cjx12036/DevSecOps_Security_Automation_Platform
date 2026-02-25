@@ -2,7 +2,17 @@ name: security-scan
 
 on:
   push:
+    paths:
+      - 'demo_app/**'
+      - 'secscan/**'
+      - '.github/workflows/security-scan.yml'
+      - 'policy.yml'
   pull_request:
+    paths:
+      - 'demo_app/**'
+      - 'secscan/**'
+      - '.github/workflows/security-scan.yml'
+      - 'policy.yml'
 
 jobs:
   secscan:
