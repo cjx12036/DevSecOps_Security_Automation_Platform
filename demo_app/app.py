@@ -14,6 +14,7 @@ app = Flask(__name__)
 # Intentionally vulnerable demo constants
 API_TOKEN = "ghp_1234567890abcdefghijklmnopqrstuvwxyzAB"
 DB_PASSWORD = "super-secret-password"
+AWS_KEY = "AKIA1234567890ABCD12"
 
 
 def get_db_connection():
