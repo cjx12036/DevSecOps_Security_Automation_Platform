@@ -8,8 +8,8 @@ setup:
 
 scan:
 	. .venv/bin/activate && \
-	python -m secscan.cli sast --path . --format json --output artifacts/sast.json --severity-threshold low --exclude ".venv,dist,build,node_modules,.git,artifacts" || true; \
-	python -m secscan.cli secrets --path . --format json --output artifacts/secrets.json --severity-threshold low --exclude ".venv,dist,build,node_modules,.git,artifacts" || true; \
+	python -m secscan.cli sast --path . --format json --output artifacts/sast.json --severity-threshold low --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || true; \
+	python -m secscan.cli secrets --path . --format json --output artifacts/secrets.json --severity-threshold low --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || true; \
 	python -c 'import json; a=json.load(open("artifacts/sast.json")); b=json.load(open("artifacts/secrets.json")); json.dump({"findings": a.get("findings",[])+b.get("findings",[])}, open("artifacts/findings.json","w"), indent=2)' && \
 	python -m secscan.cli report --input artifacts/findings.json --out artifacts && \
 	python -m secscan.cli baseline --input artifacts/findings.json --baseline artifacts/baseline.json --output artifacts/findings.filtered.json && \
@@ -26,5 +26,5 @@ run-demo:
 	. .venv/bin/activate && python -m flask --app demo_app.app run --port 5000
 
 artifacts:
-	. .venv/bin/activate && python -m secscan.cli sast --path demo_app --format sarif --output artifacts/sast.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts" && \
-	python -m secscan.cli secrets --path demo_app --format sarif --output artifacts/secrets.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts"
+	. .venv/bin/activate && python -m secscan.cli sast --path demo_app --format sarif --output artifacts/sast.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" && \
+	python -m secscan.cli secrets --path demo_app --format sarif --output artifacts/secrets.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json"

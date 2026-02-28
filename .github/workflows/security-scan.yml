@@ -104,28 +104,28 @@ jobs:
         if: steps.scope.outputs.has_files == 'true'
         run: |
           rc=0
-          python -m secscan.cli sast --path scan_scope/demo_app --format sarif --output sast.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts" || rc=$?
+          python -m secscan.cli sast --path scan_scope/demo_app --format sarif --output sast.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || rc=$?
           if [ "$rc" -gt 1 ]; then exit "$rc"; fi
 
       - name: Run Secrets (SARIF)
         if: steps.scope.outputs.has_files == 'true'
         run: |
           rc=0
-          python -m secscan.cli secrets --path scan_scope/demo_app --format sarif --output secrets.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts" || rc=$?
+          python -m secscan.cli secrets --path scan_scope/demo_app --format sarif --output secrets.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || rc=$?
           if [ "$rc" -gt 1 ]; then exit "$rc"; fi
 
       - name: Run SAST (JSON)
         if: steps.scope.outputs.has_files == 'true'
         run: |
           rc=0
-          python -m secscan.cli sast --path scan_scope/demo_app --format json --output sast.json --exclude ".venv,dist,build,node_modules,.git,artifacts" || rc=$?
+          python -m secscan.cli sast --path scan_scope/demo_app --format json --output sast.json --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || rc=$?
           if [ "$rc" -gt 1 ]; then exit "$rc"; fi
 
       - name: Run Secrets (JSON)
         if: steps.scope.outputs.has_files == 'true'
         run: |
           rc=0
-          python -m secscan.cli secrets --path scan_scope/demo_app --format json --output secrets.json --exclude ".venv,dist,build,node_modules,.git,artifacts" || rc=$?
+          python -m secscan.cli secrets --path scan_scope/demo_app --format json --output secrets.json --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || rc=$?
           if [ "$rc" -gt 1 ]; then exit "$rc"; fi
 
       - name: Merge findings

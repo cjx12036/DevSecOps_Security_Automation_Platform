@@ -229,7 +229,7 @@ def build_parser() -> argparse.ArgumentParser:
     common_scan = argparse.ArgumentParser(add_help=False)
     common_scan.add_argument("--format", choices=["json", "sarif"], default="json")
     common_scan.add_argument("--severity-threshold", choices=["low", "medium", "high", "critical"], default="low")
-    common_scan.add_argument("--exclude", default=".venv,dist,build,node_modules,.git,artifacts")
+    common_scan.add_argument("--exclude", default=".venv,dist,build,node_modules,.git,artifacts,findings_db.json")
     common_scan.add_argument("--output", help="Output file path")
 
     sast = sub.add_parser("sast", parents=[common_scan], help="Run SAST rules")
