@@ -25,6 +25,10 @@ class SarifTests(unittest.TestCase):
         sarif = to_sarif(findings)
         self.assertEqual(sarif["version"], "2.1.0")
         self.assertEqual(sarif["runs"][0]["results"][0]["ruleId"], "SEC-SQLI-001")
+        self.assertEqual(
+            sarif["runs"][0]["tool"]["driver"]["rules"][0]["properties"]["security-severity"],
+            "8.0",
+        )
 
 
 if __name__ == "__main__":

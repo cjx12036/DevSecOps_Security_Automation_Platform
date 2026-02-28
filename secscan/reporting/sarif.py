@@ -18,6 +18,8 @@ RULE_MAP = {
 }
 
 SARIF_LEVEL = {"low": "note", "medium": "warning", "high": "error", "critical": "error"}
+# GitHub Code Scanning expects security-severity as numeric string (0.0-10.0)
+SECURITY_SEVERITY = {"low": "3.0", "medium": "5.0", "high": "8.0", "critical": "9.0"}
 
 
 def to_sarif(findings: list[dict]) -> dict:
@@ -25,18 +27,22 @@ def to_sarif(findings: list[dict]) -> dict:
     results = []
     for finding in findings:
         rid = finding["id"]
+        sev = finding["severity"]
         rules[rid] = {
             "id": rid,
             "name": RULE_MAP.get(rid, rid.lower()),
             "shortDescription": {"text": finding["title"]},
             "fullDescription": {"text": finding["description"]},
             "help": {"text": " ".join(finding["remediation"])},
-            "properties": {"security-severity": finding["severity"], "owasp": finding["owasp_category"]},
+            "properties": {
+                "security-severity": SECURITY_SEVERITY.get(sev, "5.0"),
+                "owasp": finding["owasp_category"],
+            },
         }
         results.append(
             {
                 "ruleId": rid,
-                "level": SARIF_LEVEL.get(finding["severity"], "warning"),
+                "level": SARIF_LEVEL.get(sev, "warning"),
                 "message": {"text": finding["title"]},
                 "locations": [
                     {
