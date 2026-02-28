@@ -1,3 +1,136 @@
 {
-  "items": {}
+  "items": {
+    "27d2ec79beddc1e91c630f7cde6e63d2bc68344f0147e7b822ddef8376fa4010": {
+      "file": "app.py",
+      "fingerprint": "27d2ec79beddc1e91c630f7cde6e63d2bc68344f0147e7b822ddef8376fa4010",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-SSRF-001",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 48,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Potential SSRF"
+    },
+    "4d18ef9eda3682bd04afb91823a59dda2e173c0d46af7c4900a3be3090f5153c": {
+      "file": "app.py",
+      "fingerprint": "4d18ef9eda3682bd04afb91823a59dda2e173c0d46af7c4900a3be3090f5153c",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-CMDI-001",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 69,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Potential Command Injection"
+    },
+    "5539247f3c5c91ca1fbe63a6e10b5b132decee7bb94f1c82692084a5236c10a5": {
+      "file": "app.py",
+      "fingerprint": "5539247f3c5c91ca1fbe63a6e10b5b132decee7bb94f1c82692084a5236c10a5",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-SECRET-ENTROPY",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 15,
+      "owner": null,
+      "severity": "medium",
+      "status": "OPEN",
+      "title": "High-Entropy String Detected"
+    },
+    "5e4ad66de08ce3000beb6458214f24d211de809669904679245b4ea8b474370f": {
+      "file": "app.py",
+      "fingerprint": "5e4ad66de08ce3000beb6458214f24d211de809669904679245b4ea8b474370f",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-SECRET-003",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 17,
+      "owner": null,
+      "severity": "critical",
+      "status": "OPEN",
+      "title": "Potential Hardcoded Secret"
+    },
+    "6ec65daa996c9984a602ea0b9c4fbed79920be4c0d6d4b20d1a46dee040a6f50": {
+      "file": "app.py",
+      "fingerprint": "6ec65daa996c9984a602ea0b9c4fbed79920be4c0d6d4b20d1a46dee040a6f50",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-SECRET-001",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 15,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Potential Hardcoded Secret"
+    },
+    "7991cc0b57a583de46c80845ee7d2dd90819ae5a0b207601702fa16b9f832b9d": {
+      "file": "app.py",
+      "fingerprint": "7991cc0b57a583de46c80845ee7d2dd90819ae5a0b207601702fa16b9f832b9d",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-CMDI-001",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 70,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Potential Command Injection"
+    },
+    "945882a76cf01bef4854767e81d7a1bcdf0c33560344bb533cdf3c95ab22405b": {
+      "file": "app.py",
+      "fingerprint": "945882a76cf01bef4854767e81d7a1bcdf0c33560344bb533cdf3c95ab22405b",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-SECRET-004",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 15,
+      "owner": null,
+      "severity": "critical",
+      "status": "OPEN",
+      "title": "Potential Hardcoded Secret"
+    },
+    "98658c3994efb9484aed8a0e1c7d15979efe5ef6eee26336dbcf17fe0ddf4a26": {
+      "file": "app.py",
+      "fingerprint": "98658c3994efb9484aed8a0e1c7d15979efe5ef6eee26336dbcf17fe0ddf4a26",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-DESER-001",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 55,
+      "owner": null,
+      "severity": "critical",
+      "status": "OPEN",
+      "title": "Insecure Deserialization via pickle"
+    },
+    "b9ff98ce19f972d7f83bed3396f0f8f9912c553c1bd132f00fa0263a886cf1f0": {
+      "file": "app.py",
+      "fingerprint": "b9ff98ce19f972d7f83bed3396f0f8f9912c553c1bd132f00fa0263a886cf1f0",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-DESER-002",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 62,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Unsafe yaml.load usage"
+    },
+    "c7b71476d112e1ab9d688a16dc2fdaf19da898193d30b9ffbafbe2d2669d03af": {
+      "file": "app.py",
+      "fingerprint": "c7b71476d112e1ab9d688a16dc2fdaf19da898193d30b9ffbafbe2d2669d03af",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-SECRET-002",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 16,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Potential Hardcoded Secret"
+    },
+    "e1fe224cc3a9f5e63a666261b627444d86eb104f9a9de6fa8e5a8ed5bfc6cd3d": {
+      "file": "app.py",
+      "fingerprint": "e1fe224cc3a9f5e63a666261b627444d86eb104f9a9de6fa8e5a8ed5bfc6cd3d",
+      "first_seen": "2026-02-28T03:34:13.283195+00:00",
+      "id": "SEC-SECRET-ENTROPY",
+      "last_seen": "2026-02-28T03:34:13.283195+00:00",
+      "line_start": 17,
+      "owner": null,
+      "severity": "medium",
+      "status": "OPEN",
+      "title": "High-Entropy String Detected"
+    }
+  }
 }
