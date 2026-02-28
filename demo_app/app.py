@@ -36,6 +36,15 @@ def user_lookup():
     return "queried"
 
 
+@app.route("/user_raw")
+def user_lookup_raw():
+    username = request.args.get("username", "")
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(f"SELECT * FROM users WHERE username = '{username}'")
+    return "queried-raw"
+
+
 @app.route("/search")
 def search():
     q = request.args.get("q", "")
@@ -44,7 +53,8 @@ def search():
 
 @app.route("/template")
 def template_echo():
-    return render_template_string(f"<div>Hello {request.args.get('name', 'guest')}</div>")
+    name = request.args.get("name", "guest")
+    return render_template_string("<div>Hello {{ name }}</div>", name=name)
 
 
 @app.route("/proxy")
