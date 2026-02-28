@@ -157,12 +157,14 @@ jobs:
           python -m secscan.cli policy --input findings.json --policy policy.yml
 
       - name: Upload SAST SARIF
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: sast.sarif
           category: secscan-sast
 
       - name: Upload Secrets SARIF
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: secrets.sarif
