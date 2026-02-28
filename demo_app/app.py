@@ -7,7 +7,7 @@ import subprocess
 
 import requests
 import yaml
-from flask import Flask, request
+from flask import Flask, render_template_string, request
 
 app = Flask(__name__)
 
@@ -40,6 +40,11 @@ def user_lookup():
 def search():
     q = request.args.get("q", "")
     return f"<h1>Results for: {q}</h1>"
+
+
+@app.route("/template")
+def template_echo():
+    return render_template_string(f"<div>Hello {request.args.get('name', 'guest')}</div>")
 
 
 @app.route("/proxy")
