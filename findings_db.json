@@ -1,5 +1,41 @@
 {
   "items": {
+    "12a7580a3546a81fff558b37864caf2c5c0cd9a767f5d0335be8a5f0a3afab24": {
+      "file": "app.py",
+      "fingerprint": "12a7580a3546a81fff558b37864caf2c5c0cd9a767f5d0335be8a5f0a3afab24",
+      "first_seen": "2026-04-01T03:53:24.145120+00:00",
+      "id": "SEMGREP-HOME-RUNNER-WORK-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-SECSCAN-RULES-SEMGREP-SECSCAN-PYTHON-COMMAND-SHELL-TRUE",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
+      "line_start": 77,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Potential command injection via shell=True."
+    },
+    "1edbafc0f3f77f503dc7026455ec4531c378dc6a965d503be43c725feae4f2e0": {
+      "file": "app.py",
+      "fingerprint": "1edbafc0f3f77f503dc7026455ec4531c378dc6a965d503be43c725feae4f2e0",
+      "first_seen": "2026-04-01T03:53:24.145120+00:00",
+      "id": "SEMGREP-HOME-RUNNER-WORK-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-SECSCAN-RULES-SEMGREP-SECSCAN-PYTHON-DESER-PICKLE-LOADS",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
+      "line_start": 61,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Insecure deserialization via pickle.loads."
+    },
+    "2118dea0ac4fc320b65d69296692ed78c264fadbc8529546a701a444f6e51d94": {
+      "file": "app.py",
+      "fingerprint": "2118dea0ac4fc320b65d69296692ed78c264fadbc8529546a701a444f6e51d94",
+      "first_seen": "2026-04-01T03:53:24.145120+00:00",
+      "id": "SEMGREP-HOME-RUNNER-WORK-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-SECSCAN-RULES-SEMGREP-SECSCAN-PYTHON-SSRF-REQUESTS-USER",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
+      "line_start": 53,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Potential SSRF with requests call using dynamic URL."
+    },
     "27d2ec79beddc1e91c630f7cde6e63d2bc68344f0147e7b822ddef8376fa4010": {
       "file": "app.py",
       "fingerprint": "27d2ec79beddc1e91c630f7cde6e63d2bc68344f0147e7b822ddef8376fa4010",
@@ -23,6 +59,18 @@
       "severity": "critical",
       "status": "FIXED",
       "title": "Insecure Deserialization via pickle"
+    },
+    "46b35b3fa539cb7a6efffcb96109ea27499d1dd612811777d21c9b3223c8812e": {
+      "file": "app.py",
+      "fingerprint": "46b35b3fa539cb7a6efffcb96109ea27499d1dd612811777d21c9b3223c8812e",
+      "first_seen": "2026-04-01T03:53:24.145120+00:00",
+      "id": "SEMGREP-HOME-RUNNER-WORK-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-SECSCAN-RULES-SEMGREP-SECSCAN-PYTHON-XSS-RENDER-RAW",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
+      "line_start": 46,
+      "owner": null,
+      "severity": "medium",
+      "status": "OPEN",
+      "title": "Potential XSS by rendering user-controlled content without explicit escaping."
     },
     "47d1607e58231241529633875c9b54882cb70fe65f46adad2cb97168fd61957b": {
       "file": "app.py",
@@ -53,11 +101,11 @@
       "fingerprint": "5539247f3c5c91ca1fbe63a6e10b5b132decee7bb94f1c82692084a5236c10a5",
       "first_seen": "2026-02-28T03:34:13.283195+00:00",
       "id": "SEC-SECRET-ENTROPY",
-      "last_seen": "2026-02-28T04:12:27.098295+00:00",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
       "line_start": 15,
       "owner": null,
       "severity": "medium",
-      "status": "FIXED",
+      "status": "OPEN",
       "title": "High-Entropy String Detected"
     },
     "5e4ad66de08ce3000beb6458214f24d211de809669904679245b4ea8b474370f": {
@@ -89,12 +137,24 @@
       "fingerprint": "6ec65daa996c9984a602ea0b9c4fbed79920be4c0d6d4b20d1a46dee040a6f50",
       "first_seen": "2026-02-28T03:34:13.283195+00:00",
       "id": "SEC-SECRET-001",
-      "last_seen": "2026-02-28T04:12:27.098295+00:00",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
       "line_start": 15,
       "owner": null,
       "severity": "high",
-      "status": "FIXED",
+      "status": "OPEN",
       "title": "Potential Hardcoded Secret"
+    },
+    "768bfa565ab74d0218fcef9994dd77f240c1eb632a1f677f27be3d9e346d2db2": {
+      "file": "app.py",
+      "fingerprint": "768bfa565ab74d0218fcef9994dd77f240c1eb632a1f677f27be3d9e346d2db2",
+      "first_seen": "2026-04-01T03:53:24.145120+00:00",
+      "id": "SEMGREP-HOME-RUNNER-WORK-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-SECSCAN-RULES-SEMGREP-SECSCAN-PYTHON-SQL-INJECTION-FSTRING",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
+      "line_start": 38,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Potential SQL injection via dynamic string in SQL execution."
     },
     "793877fd20c82f985b425e6da0548cdece71ea92a53883325f7d3c8611a01c75": {
       "file": "app.py",
@@ -161,11 +221,11 @@
       "fingerprint": "945882a76cf01bef4854767e81d7a1bcdf0c33560344bb533cdf3c95ab22405b",
       "first_seen": "2026-02-28T03:34:13.283195+00:00",
       "id": "SEC-SECRET-004",
-      "last_seen": "2026-02-28T04:12:27.098295+00:00",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
       "line_start": 15,
       "owner": null,
       "severity": "critical",
-      "status": "FIXED",
+      "status": "OPEN",
       "title": "Potential Hardcoded Secret"
     },
     "98658c3994efb9484aed8a0e1c7d15979efe5ef6eee26336dbcf17fe0ddf4a26": {
@@ -204,6 +264,18 @@
       "status": "FIXED",
       "title": "Potential SSRF"
     },
+    "b1727f74c48a2657f126885154ed9558f33ac340f0960b587a1cf30b7bbc18e3": {
+      "file": "app.py",
+      "fingerprint": "b1727f74c48a2657f126885154ed9558f33ac340f0960b587a1cf30b7bbc18e3",
+      "first_seen": "2026-04-01T03:53:24.145120+00:00",
+      "id": "SEMGREP-HOME-RUNNER-WORK-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-SECSCAN-RULES-SEMGREP-SECSCAN-PYTHON-COMMAND-SHELL-TRUE",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
+      "line_start": 78,
+      "owner": null,
+      "severity": "high",
+      "status": "OPEN",
+      "title": "Potential command injection via shell=True."
+    },
     "b9ff98ce19f972d7f83bed3396f0f8f9912c553c1bd132f00fa0263a886cf1f0": {
       "file": "app.py",
       "fingerprint": "b9ff98ce19f972d7f83bed3396f0f8f9912c553c1bd132f00fa0263a886cf1f0",
@@ -215,6 +287,18 @@
       "severity": "high",
       "status": "FIXED",
       "title": "Unsafe yaml.load usage"
+    },
+    "c1ea9536d73c98087df2f86a0843dd97baa6b2f8d0a3c00d35ee339dbb48eb95": {
+      "file": "app.py",
+      "fingerprint": "c1ea9536d73c98087df2f86a0843dd97baa6b2f8d0a3c00d35ee339dbb48eb95",
+      "first_seen": "2026-04-01T03:53:24.145120+00:00",
+      "id": "SEMGREP-HOME-RUNNER-WORK-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-DEVSECOPS-SECURITY-AUTOMATION-PLATFORM-SECSCAN-RULES-SEMGREP-SECSCAN-PYTHON-DESER-YAML-LOAD",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
+      "line_start": 69,
+      "owner": null,
+      "severity": "medium",
+      "status": "OPEN",
+      "title": "Unsafe yaml.load without SafeLoader."
     },
     "c428bba6edb6d9a34e6ca1f9b934546778299a168809602ac34e113a89a192a4": {
       "file": "app.py",
@@ -233,11 +317,11 @@
       "fingerprint": "c7b71476d112e1ab9d688a16dc2fdaf19da898193d30b9ffbafbe2d2669d03af",
       "first_seen": "2026-02-28T03:34:13.283195+00:00",
       "id": "SEC-SECRET-002",
-      "last_seen": "2026-02-28T04:12:27.098295+00:00",
+      "last_seen": "2026-04-01T03:53:24.145120+00:00",
       "line_start": 16,
       "owner": null,
       "severity": "high",
-      "status": "FIXED",
+      "status": "OPEN",
       "title": "Potential Hardcoded Secret"
     },
     "cc9c0deb65472211e95fb4d01d322e4ded14e8132ee7e7ca42fba5211c841498": {
