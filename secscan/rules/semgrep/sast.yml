@@ -1,0 +1,97 @@
+rules:
+  - id: secscan.python.sql.injection.fstring
+    message: Potential SQL injection via dynamic string in SQL execution.
+    severity: ERROR
+    languages: [python]
+    patterns:
+      - pattern-either:
+          - pattern: $CUR.execute(f"...")
+          - pattern: $CUR.execute("..." + $X)
+          - pattern: $CUR.execute("..." % $X)
+      - metavariable-regex:
+          metavariable: $CUR
+          regex: (?i).*(cursor|cur|db).*
+    metadata:
+      owasp: A03:2021-Injection
+      confidence: high
+      description: Dynamic SQL construction in execute call can allow injection.
+
+  - id: secscan.python.xss.render.raw
+    message: Potential XSS by rendering user-controlled content without explicit escaping.
+    severity: WARNING
+    languages: [python]
+    patterns:
+      - pattern-either:
+          - pattern: return $REQ.args.get(...)
+          - pattern: return $REQ.form.get(...)
+          - pattern: return f"...{$X}..."
+    metadata:
+      owasp: A03:2021-Injection
+      confidence: medium
+      description: Response body may include untrusted data.
+
+  - id: secscan.python.ssrf.requests.user
+    message: Potential SSRF with requests call using dynamic URL.
+    severity: ERROR
+    languages: [python]
+    patterns:
+      - pattern-either:
+          - pattern: requests.get($URL, ...)
+          - pattern: requests.post($URL, ...)
+          - pattern: requests.request(..., $URL, ...)
+      - pattern-not: requests.get("$CONST", ...)
+      - pattern-not: requests.post("$CONST", ...)
+    metadata:
+      owasp: A10:2021-Server-Side Request Forgery
+      confidence: medium
+      description: Outbound request uses non-literal URL; enforce allowlists.
+
+  - id: secscan.python.deser.pickle.loads
+    message: Insecure deserialization via pickle.loads.
+    severity: ERROR
+    languages: [python]
+    pattern: pickle.loads(...)
+    metadata:
+      owasp: A08:2021-Software and Data Integrity Failures
+      confidence: high
+      description: pickle deserialization can execute arbitrary code.
+
+  - id: secscan.python.deser.yaml.load
+    message: Unsafe yaml.load without SafeLoader.
+    severity: WARNING
+    languages: [python]
+    patterns:
+      - pattern: yaml.load(...)
+      - pattern-not: yaml.load(..., Loader=yaml.SafeLoader)
+    metadata:
+      owasp: A08:2021-Software and Data Integrity Failures
+      confidence: high
+      description: yaml.load may construct arbitrary objects.
+
+  - id: secscan.python.command.shell.true
+    message: Potential command injection via shell=True.
+    severity: ERROR
+    languages: [python]
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.run(..., shell=True, ...)
+          - pattern: subprocess.Popen(..., shell=True, ...)
+          - pattern: os.system(...)
+    metadata:
+      owasp: A03:2021-Injection
+      confidence: high
+      description: Shell execution with user input may allow command injection.
+
+  - id: secscan.js.command.exec
+    message: Potential command injection in Node.js child_process usage.
+    severity: ERROR
+    languages: [javascript, typescript]
+    patterns:
+      - pattern-either:
+          - pattern: exec($CMD)
+          - pattern: execSync($CMD)
+          - pattern: spawn($CMD, ...)
+    metadata:
+      owasp: A03:2021-Injection
+      confidence: medium
+      description: child_process execution should avoid tainted input.

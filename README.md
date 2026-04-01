@@ -3,7 +3,8 @@
 A practical Python 3.11+ security automation platform that integrates into SDLC and demonstrates OWASP Top 10-oriented detection, CI policy gating, and governance tracking.
 
 ## Features
-- Automated SAST + secrets scanning via `secscan` CLI.
+- Agent-orchestrated parallel scanning via `secscan agent`.
+- External scanner backends: Semgrep (SAST), Trivy (secrets), with legacy fallback.
 - Optional lightweight DAST checks for reflected XSS + SSRF proxy behavior.
 - Multi-format outputs: JSON, SARIF (GitHub code scanning), HTML report.
 - Governance sync with lifecycle states: `OPEN`, `FIXED`, `ACCEPTED_RISK`.
@@ -14,6 +15,7 @@ A practical Python 3.11+ security automation platform that integrates into SDLC 
 make setup
 make scan
 ```
+`make setup` installs Semgrep. In CI we also install Trivy; locally, if Trivy is absent, secrets scanning falls back to the built-in engine.
 `make scan` always generates local artifacts; use `make gate` to enforce fail-on-high/critical policy locally.
 
 Run demo app:
@@ -21,15 +23,16 @@ Run demo app:
 make run-demo
 ```
 
-Generate demo-only SARIF artifacts:
+Generate demo-only artifacts:
 ```bash
 make artifacts
 ```
 
 ## CLI Commands
 ```bash
-python -m secscan.cli sast --path <repo> [--format json|sarif] [--severity-threshold low|medium|high|critical] [--exclude ".venv,dist,build,node_modules"]
-python -m secscan.cli secrets --path <repo> [--format json|sarif] [--severity-threshold low|medium|high|critical] [--exclude ".venv,dist,build,node_modules"]
+python -m secscan.cli sast --path <repo> [--format json|sarif] [--engine auto|semgrep|legacy] [--severity-threshold low|medium|high|critical] [--exclude ".venv,dist,build,node_modules"]
+python -m secscan.cli secrets --path <repo> [--format json|sarif] [--engine auto|trivy|legacy] [--severity-threshold low|medium|high|critical] [--exclude ".venv,dist,build,node_modules"]
+python -m secscan.cli agent --path <repo> --out-dir <dir> [--sast-engine auto|semgrep|legacy] [--secrets-engine auto|trivy|legacy]
 python -m secscan.cli report --input <json> --out <dir>
 python -m secscan.cli baseline --input <json> --baseline <file>
 python -m secscan.cli policy --input <json> --policy <yaml>
@@ -71,11 +74,11 @@ Use `secscan sync` to update `findings_db.json`:
 Workflow: `.github/workflows/security-scan.yml`
 - Trigger: `push` + `pull_request` on relevant paths only (`demo_app/**`, `secscan/**`, workflow, `policy.yml`).
 - Scope: computes changed files and scans only changed files under `demo_app/`.
-- Runs `secscan sast` and `secscan secrets` (exit code `1` tolerated; runtime errors still fail).
+- Runs `secscan agent` (parallel Semgrep + Trivy orchestration with fallback).
 - Uploads SARIF to GitHub code scanning with separate categories:
   - `secscan-sast`
   - `secscan-secrets`
-- Merges JSON findings and fails build on `high`/`critical` in policy step.
+- Fails build on `high`/`critical` in policy step.
 
 Local policy gate:
 ```bash
@@ -83,8 +86,8 @@ make gate
 ```
 
 ## How To Add A Rule
-1. Add a rule module under `secscan/rules/` returning `list[Finding]`.
-2. Register it in `secscan/rules/__init__.py` and `secscan/scanners.py`.
+1. Add a Semgrep rule in `secscan/rules/semgrep/sast.yml` or add a Python legacy rule in `secscan/rules/`.
+2. Register legacy rules in `secscan/rules/__init__.py` and `secscan/scanners.py`.
 3. Add tests under `tests/` for detection behavior and false-positive boundaries.
 4. Optionally map rule metadata in `secscan/reporting/sarif.py`.
 

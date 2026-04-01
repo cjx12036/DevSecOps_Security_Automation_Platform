@@ -8,6 +8,7 @@ from urllib.error import URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
+from secscan.agent import run_agent_pipeline
 from secscan.governance import sync_findings_db
 from secscan.reporting.html import render_html
 from secscan.reporting.sarif import to_sarif
@@ -74,7 +75,7 @@ def _load_policy(path: str) -> dict:
 
 def _emit(findings: list[dict], fmt: str, output: str | None) -> None:
     payload = {"findings": findings}
-    rendered: dict | str = payload if fmt == "json" else to_sarif(findings)
+    rendered: dict = payload if fmt == "json" else to_sarif(findings)
     text = json.dumps(rendered, indent=2, sort_keys=True)
     if output:
         Path(output).parent.mkdir(parents=True, exist_ok=True)
@@ -84,17 +85,31 @@ def _emit(findings: list[dict], fmt: str, output: str | None) -> None:
 
 
 def cmd_sast(args: argparse.Namespace) -> int:
-    findings = _findings_to_dict(run_sast(args.path, _parse_exclude(args.exclude)))
+    findings = _findings_to_dict(run_sast(args.path, _parse_exclude(args.exclude), args.engine))
     findings = [f for f in findings if severity_at_least(f["severity"], args.severity_threshold)]
     _emit(findings, args.format, args.output)
     return EXIT_POLICY if findings else EXIT_OK
 
 
 def cmd_secrets(args: argparse.Namespace) -> int:
-    findings = _findings_to_dict(run_secrets(args.path, _parse_exclude(args.exclude)))
+    findings = _findings_to_dict(run_secrets(args.path, _parse_exclude(args.exclude), args.engine))
     findings = [f for f in findings if severity_at_least(f["severity"], args.severity_threshold)]
     _emit(findings, args.format, args.output)
     return EXIT_POLICY if findings else EXIT_OK
+
+
+def cmd_agent(args: argparse.Namespace) -> int:
+    result = run_agent_pipeline(
+        path=args.path,
+        out_dir=args.out_dir,
+        exclude=_parse_exclude(args.exclude),
+        severity_threshold=args.severity_threshold,
+        sast_engine=args.sast_engine,
+        secrets_engine=args.secrets_engine,
+    )
+    if args.output:
+        save_json(args.output, {"findings": result.get("findings", [])})
+    return EXIT_OK
 
 
 def cmd_report(args: argparse.Namespace) -> int:
@@ -234,11 +249,23 @@ def build_parser() -> argparse.ArgumentParser:
 
     sast = sub.add_parser("sast", parents=[common_scan], help="Run SAST rules")
     sast.add_argument("--path", required=True)
+    sast.add_argument("--engine", choices=["auto", "semgrep", "legacy"], default="auto")
     sast.set_defaults(func=cmd_sast)
 
     secrets = sub.add_parser("secrets", parents=[common_scan], help="Run secrets scan")
     secrets.add_argument("--path", required=True)
+    secrets.add_argument("--engine", choices=["auto", "trivy", "legacy"], default="auto")
     secrets.set_defaults(func=cmd_secrets)
+
+    agent = sub.add_parser("agent", help="Run agent scheduler (parallel SAST + secrets) and emit artifacts")
+    agent.add_argument("--path", required=True)
+    agent.add_argument("--out-dir", required=True)
+    agent.add_argument("--severity-threshold", choices=["low", "medium", "high", "critical"], default="low")
+    agent.add_argument("--exclude", default=".venv,dist,build,node_modules,.git,artifacts,findings_db.json")
+    agent.add_argument("--sast-engine", choices=["auto", "semgrep", "legacy"], default="auto")
+    agent.add_argument("--secrets-engine", choices=["auto", "trivy", "legacy"], default="auto")
+    agent.add_argument("--output", help="Optional combined findings JSON path")
+    agent.set_defaults(func=cmd_agent)
 
     report = sub.add_parser("report", help="Generate HTML report")
     report.add_argument("--input", required=True)

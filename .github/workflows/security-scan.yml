@@ -35,9 +35,13 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Set up Trivy
+        uses: aquasecurity/setup-trivy@v0.2.2
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          python -m pip install -e . semgrep
 
       - name: Build Changed Scope
         id: scope
@@ -90,47 +94,25 @@ jobs:
             "version": "2.1.0",
             "runs": [{"tool": {"driver": {"name": "secscan", "version": "0.1.0", "rules": []}}, "results": []}],
           }
-          with open("sast.json", "w", encoding="utf-8") as f:
-            json.dump({"findings": []}, f, indent=2)
-          with open("secrets.json", "w", encoding="utf-8") as f:
-            json.dump({"findings": []}, f, indent=2)
-          with open("sast.sarif", "w", encoding="utf-8") as f:
-            json.dump(empty_sarif, f, indent=2)
-          with open("secrets.sarif", "w", encoding="utf-8") as f:
-            json.dump(empty_sarif, f, indent=2)
+          for name in ["sast", "secrets", "findings"]:
+            with open(f"{name}.json", "w", encoding="utf-8") as f:
+              json.dump({"findings": []}, f, indent=2)
+            with open(f"{name}.sarif", "w", encoding="utf-8") as f:
+              json.dump(empty_sarif, f, indent=2)
+          with open("summary.json", "w", encoding="utf-8") as f:
+            json.dump({"total": 0, "by_severity": {"critical": 0, "high": 0, "medium": 0, "low": 0}}, f, indent=2)
           PY
 
-      - name: Run SAST (SARIF)
+      - name: Run Agent Scan (Semgrep + Trivy, with fallback)
         if: steps.scope.outputs.has_files == 'true'
         run: |
-          rc=0
-          python -m secscan.cli sast --path scan_scope/demo_app --format sarif --output sast.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || rc=$?
-          if [ "$rc" -gt 1 ]; then exit "$rc"; fi
-
-      - name: Run Secrets (SARIF)
-        if: steps.scope.outputs.has_files == 'true'
-        run: |
-          rc=0
-          python -m secscan.cli secrets --path scan_scope/demo_app --format sarif --output secrets.sarif --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || rc=$?
-          if [ "$rc" -gt 1 ]; then exit "$rc"; fi
-
-      - name: Run SAST (JSON)
-        if: steps.scope.outputs.has_files == 'true'
-        run: |
-          rc=0
-          python -m secscan.cli sast --path scan_scope/demo_app --format json --output sast.json --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || rc=$?
-          if [ "$rc" -gt 1 ]; then exit "$rc"; fi
-
-      - name: Run Secrets (JSON)
-        if: steps.scope.outputs.has_files == 'true'
-        run: |
-          rc=0
-          python -m secscan.cli secrets --path scan_scope/demo_app --format json --output secrets.json --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json" || rc=$?
-          if [ "$rc" -gt 1 ]; then exit "$rc"; fi
-
-      - name: Merge findings
-        run: |
-          python -c 'import json; a=json.load(open("sast.json")); b=json.load(open("secrets.json")); json.dump({"findings":a.get("findings",[])+b.get("findings",[])}, open("findings.json","w"), indent=2)'
+          python -m secscan.cli agent \
+            --path scan_scope/demo_app \
+            --out-dir . \
+            --severity-threshold low \
+            --sast-engine auto \
+            --secrets-engine auto \
+            --exclude ".venv,dist,build,node_modules,.git,artifacts,findings_db.json"
 
       - name: Sync Governance DB
         if: steps.scope.outputs.has_files == 'true'
@@ -152,10 +134,6 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
 
-      - name: Enforce policy
-        run: |
-          python -m secscan.cli policy --input findings.json --policy policy.yml
-
       - name: Upload SAST SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v3
@@ -169,3 +147,7 @@ jobs:
         with:
           sarif_file: secrets.sarif
           category: secscan-secrets
+
+      - name: Enforce policy
+        run: |
+          python -m secscan.cli policy --input findings.json --policy policy.yml
