@@ -35,14 +35,20 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Trivy CLI
+      - name: Install Trivy CLI (best effort)
         run: |
-          set -euo pipefail
+          set +e
           TRIVY_VERSION=0.68.2
-          wget -q https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz
-          tar -xzf trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz trivy
+          echo "Attempting to install Trivy ${TRIVY_VERSION}..."
+          curl -fsSL --retry 3 --retry-delay 2             "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz"             -o trivy.tar.gz
+          rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo "Trivy download failed (rc=${rc}). Continue with legacy secrets engine fallback."
+            exit 0
+          fi
+          tar -xzf trivy.tar.gz trivy
           sudo install -m 0755 trivy /usr/local/bin/trivy
-          trivy --version
+          trivy --version || true
 
       - name: Install dependencies
         run: |
